@@ -1,7 +1,5 @@
 package dojo.leeds.problem4
 
-import org.hamcrest.CoreMatchers.not
-import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.core.IsEqual.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Test
@@ -20,17 +18,7 @@ class PupilReaderTest {
 
     @Test
     fun `given a PupilReader then readFile should return a list of lines `() {
-        val lines = pupilReader.readPupilFile()
-        assertThat(lines, not(nullValue()))
-        assertThat(lines.count(), equalTo(122))
-
-        //Name, Gender, Class, English, Maths, Science
-        val pupils =
-                lines
-                        .drop(1)
-                        .map { it -> it.split(",").map { it-> it.trim() }}
-                        .map { it ->
-                            PupilData(it[0], it[1], it[2],Integer.parseInt(it[3]),Integer.parseInt(it[4]),Integer.parseInt(it[5]))}
+        val pupils = pupilReader.readPupilFile()
 
         System.out.println("Number of pupils " + pupils.size)
         System.out.println("Distinct pupil names " + pupils.distinctBy { (name) -> name }.size)
@@ -38,5 +26,36 @@ class PupilReaderTest {
         System.out.println(pupils
                 .groupBy { it -> it.`class` }
                 .map { it -> "Class " + it.key + " Size " + it.value.size})
+    }
+
+    @Test
+    fun `The number of pupils is 121`() {
+        val pupils = pupilReader.readPupilFile()
+
+        System.out.println("Number of pupils " + pupils.size)
+
+        assertThat(pupils.size, equalTo(121))
+    }
+
+    @Test
+    fun `The number of classes is 38`() {
+        val pupils = pupilReader.readPupilFile()
+
+        val numberOfClasses = pupils.distinctBy { (name) -> name }.size
+
+        System.out.println("Distinct pupil names " + numberOfClasses)
+        assertThat(numberOfClasses, equalTo(38))
+    }
+
+    @Test
+    fun `The size of each class is`() {
+        val pupils = pupilReader.readPupilFile()
+
+        System.out.println(pupils
+                .groupBy { it -> it.`class` }
+                .map { it ->  Pair(it.key,it.value.size)}
+                .sortedBy { it -> it.first }
+                .map { (`class`, size) -> "Class ${`class`} Size ${size}"}
+                .joinToString(System.lineSeparator()))
     }
 }
