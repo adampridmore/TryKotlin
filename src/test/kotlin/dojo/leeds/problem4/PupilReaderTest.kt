@@ -54,7 +54,7 @@ class PupilReaderTest {
         System.out.println(pupils
                 .groupBy { it -> it.`class` }
                 .map { it ->  Pair(it.key,it.value.size)}
-                .sortedBy { it -> it.first }
+                .sortedBy { (`class`, _) -> `class`}
                 .map { (`class`, size) -> "Class ${`class`} Size ${size}"}
                 .joinToString(System.lineSeparator()))
     }
