@@ -44,4 +44,13 @@ class FizzBuzzTest {
         assertThat(fizzBuzz(20), equalTo(expectedValues))
     }
 
+    @Test
+    fun `Configurable Fizz Buzz numbers`(){
+        assertThat(fizzBuzzValue(1, 2, 7), equalTo("1"))
+        assertThat(fizzBuzzValue(2, 2, 7), equalTo("Fizz"))
+        assertThat(fizzBuzzValue(3, 2, 7), equalTo("3"))
+        assertThat(fizzBuzzValue(5, 2, 7), equalTo("5"))
+        assertThat(fizzBuzzValue(7, 2, 7), equalTo("Buzz"))
+        assertThat(fizzBuzzValue(14, 2, 7), equalTo("Fizz Buzz"))
+    }
 }
