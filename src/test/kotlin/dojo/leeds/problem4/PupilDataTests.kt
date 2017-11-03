@@ -96,4 +96,21 @@ class PupilDataTests {
 
         printPupils(allPassPupils)
     }
+
+    @Test
+    fun `Which were the highest scoring Boy & Girl in each class`() {
+        val (boys, girls) =
+                pupilReader
+                        .readPupilFile()
+                        .partition { pupil -> pupil.gender == "M" }
+
+        val highestScoring = fun(pupils : List<PupilData>) : PupilData {
+            return pupils
+                    .sortedByDescending { p-> p.english + p.maths + p.science }
+                    .first()
+        }
+
+        println(highestScoring(boys))
+        println(highestScoring(girls))
+    }
 }
