@@ -4,9 +4,9 @@ import org.hamcrest.core.IsEqual.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Test
 
-class PupilReaderTest {
+class PupilDataTests {
 
-    val pupilReader = PupilReader()
+    private val pupilReader = PupilReader()
 
     @Test
     fun `pupil grade`() {
@@ -57,5 +57,21 @@ class PupilReaderTest {
                 .sortedBy { (`class`, _) -> `class`}
                 .map { (`class`, size) -> "Class ${`class`} Size ${size}"}
                 .joinToString(System.lineSeparator()))
+    }
+
+    @Test
+    fun `Which students were awarded 3 grade 'A's?`() {
+        val pupils = pupilReader.readPupilFile()
+
+        val gradeAPupils = pupils
+                .filter { p -> p.EnglishGrade == "A" }
+                .filter { p -> p.MathsGrade == "A" }
+                .filter { p -> p.ScienceGrade == "A" }
+
+        System.out.println(gradeAPupils
+                .joinToString(System.lineSeparator()))
+
+        assertThat(gradeAPupils.size, equalTo(1))
+        assertThat(gradeAPupils[0].name, equalTo("Joshua"))
     }
 }
