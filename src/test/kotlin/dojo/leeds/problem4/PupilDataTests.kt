@@ -5,8 +5,11 @@ import org.junit.Assert.assertThat
 import org.junit.Test
 
 class PupilDataTests {
+    private val pupils = PupilReader().readPupilFile()
 
-    private val pupilReader = PupilReader()
+    private fun <T> List<T>.printLines() {
+        System.out.println(this.joinToString(System.lineSeparator()))
+    }
 
     @Test
     fun `pupil grade`() {
@@ -18,20 +21,17 @@ class PupilDataTests {
 
     @Test
     fun `given a PupilReader then readFile should return a list of lines `() {
-        val pupils = pupilReader.readPupilFile()
-
         System.out.println("Number of pupils " + pupils.size)
         System.out.println("Distinct pupil names " + pupils.distinctBy { (name) -> name }.size)
 
-        System.out.println(pupils
+        pupils
                 .groupBy { it -> it.`class` }
-                .map { it -> "Class " + it.key + " Size " + it.value.size})
+                .map { it -> "Class " + it.key + " Size " + it.value.size }
+                .printLines()
     }
 
     @Test
     fun `The number of pupils is 121`() {
-        val pupils = pupilReader.readPupilFile()
-
         System.out.println("Number of pupils " + pupils.size)
 
         assertThat(pupils.size, equalTo(121))
@@ -39,8 +39,6 @@ class PupilDataTests {
 
     @Test
     fun `The number of classes is 38`() {
-        val pupils = pupilReader.readPupilFile()
-
         val numberOfClasses = pupils.distinctBy { (name) -> name }.size
 
         System.out.println("Distinct pupil names " + numberOfClasses)
@@ -49,39 +47,51 @@ class PupilDataTests {
 
     @Test
     fun `The size of each class is`() {
-        val pupils = pupilReader.readPupilFile()
-
-        System.out.println(pupils
+        pupils
                 .groupBy { it -> it.`class` }
-                .map { it ->  Pair(it.key,it.value.size)}
-                .sortedBy { (`class`, _) -> `class`}
-                .map { (`class`, size) -> "Class ${`class`} Size ${size}"}
-                .joinToString(System.lineSeparator()))
+                .map { it -> Pair(it.key, it.value.size) }
+                .sortedBy { (`class`, _) -> `class` }
+                .map { (`class`, size) -> "Class ${`class`} Size ${size}" }
+                .printLines()
+    }
+
+    @Test
+    fun `Which class has the highest average score per pupil`() {
+        val r = fun(fst: Pair<Int, Int>, snd: Pair<Int, Int>): Pair<Int, Int> {
+            return Pair(fst.first + snd.first, fst.second + snd.second)
+        }
+
+        val averageClassScore =
+                pupils
+                        .groupBy { p -> p.`class` }
+                        .map { clas ->
+                            val (gradeCount, gradeTotal) = clas.value
+                                    .map { p -> Pair(3, p.science + p.maths + p.english) }
+                                    .reduce { a, b -> r(a, b) }
+                            val averageGrade = (gradeTotal / gradeCount)
+                            Pair(clas.key, averageGrade)
+                        }
+                        .sortedBy { p -> p.first }
+
+        averageClassScore.printLines()
     }
 
     @Test
     fun `Which students were awarded 3 grade 'A's?`() {
-        val pupils = pupilReader.readPupilFile()
-
         val gradeAPupils = pupils
                 .filter { p -> p.EnglishGrade == Grade.A }
-                .filter { p -> p.MathsGrade == Grade.A}
-                .filter { p -> p.ScienceGrade == Grade.A}
+                .filter { p -> p.MathsGrade == Grade.A }
+                .filter { p -> p.ScienceGrade == Grade.A }
 
-        printPupils(gradeAPupils)
+        gradeAPupils.printLines()
 
         assertThat(gradeAPupils.size, equalTo(1))
         assertThat(gradeAPupils[0].name, equalTo("Joshua"))
     }
 
-    private fun printPupils(gradeAPupils: List<PupilData>) {
-        System.out.println(gradeAPupils
-                .joinToString(System.lineSeparator()))
-    }
-
     @Test
     fun `Which students were awarded at least a 'C' in all subjects`() {
-        fun atLeastC(grade: Grade) = when(grade){
+        fun atLeastC(grade: Grade) = when (grade) {
             Grade.A -> true
             Grade.B -> true
             Grade.C -> true
@@ -89,24 +99,22 @@ class PupilDataTests {
         }
 
         val allPassPupils =
-                pupilReader.readPupilFile()
-                .filter { p -> atLeastC(p.EnglishGrade) }
-                .filter { p -> atLeastC(p.MathsGrade) }
-                .filter { p -> atLeastC(p.ScienceGrade) }
+                pupils
+                        .filter { p -> atLeastC(p.EnglishGrade) }
+                        .filter { p -> atLeastC(p.MathsGrade) }
+                        .filter { p -> atLeastC(p.ScienceGrade) }
 
-        printPupils(allPassPupils)
+        allPassPupils.printLines()
     }
 
     @Test
     fun `Which were the highest scoring Boy & Girl in each class`() {
         val (boys, girls) =
-                pupilReader
-                        .readPupilFile()
-                        .partition { pupil -> pupil.gender == "M" }
+                pupils.partition { pupil -> pupil.gender == "M" }
 
-        val highestScoring = fun(pupils : List<PupilData>) : PupilData {
+        val highestScoring = fun(pupils: List<PupilData>): PupilData {
             return pupils
-                    .sortedByDescending { p-> p.english + p.maths + p.science }
+                    .sortedByDescending { p -> p.english + p.maths + p.science }
                     .first()
         }
 
