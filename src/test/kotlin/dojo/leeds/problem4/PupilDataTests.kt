@@ -11,9 +11,9 @@ class PupilDataTests {
     @Test
     fun `pupil grade`() {
         val pupil = PupilData("myName", "M", "myClass", 50, 60, 70)
-        assertThat(pupil.EnglishGrade, equalTo("D"))
-        assertThat(pupil.MathsGrade, equalTo("C"))
-        assertThat(pupil.ScienceGrade, equalTo("B"))
+        assertThat(pupil.EnglishGrade, equalTo(Grade.D))
+        assertThat(pupil.MathsGrade, equalTo(Grade.C))
+        assertThat(pupil.ScienceGrade, equalTo(Grade.B))
     }
 
     @Test
@@ -64,9 +64,9 @@ class PupilDataTests {
         val pupils = pupilReader.readPupilFile()
 
         val gradeAPupils = pupils
-                .filter { p -> p.EnglishGrade == "A" }
-                .filter { p -> p.MathsGrade == "A" }
-                .filter { p -> p.ScienceGrade == "A" }
+                .filter { p -> p.EnglishGrade == Grade.A }
+                .filter { p -> p.MathsGrade == Grade.A}
+                .filter { p -> p.ScienceGrade == Grade.A}
 
         printPupils(gradeAPupils)
 
@@ -81,10 +81,10 @@ class PupilDataTests {
 
     @Test
     fun `Which students were awarded at least a 'C' in all subjects`() {
-        fun atLeastC(grade: String) = when(grade){
-            "A" -> true
-            "B" -> true
-            "C" -> true
+        fun atLeastC(grade: Grade) = when(grade){
+            Grade.A -> true
+            Grade.B -> true
+            Grade.C -> true
             else -> false
         }
 
