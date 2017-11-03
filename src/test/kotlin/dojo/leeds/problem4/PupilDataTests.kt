@@ -68,10 +68,32 @@ class PupilDataTests {
                 .filter { p -> p.MathsGrade == "A" }
                 .filter { p -> p.ScienceGrade == "A" }
 
-        System.out.println(gradeAPupils
-                .joinToString(System.lineSeparator()))
+        printPupils(gradeAPupils)
 
         assertThat(gradeAPupils.size, equalTo(1))
         assertThat(gradeAPupils[0].name, equalTo("Joshua"))
+    }
+
+    private fun printPupils(gradeAPupils: List<PupilData>) {
+        System.out.println(gradeAPupils
+                .joinToString(System.lineSeparator()))
+    }
+
+    @Test
+    fun `Which students were awarded at least a 'C' in all subjects`() {
+        fun atLeastC(grade: String) = when(grade){
+            "A" -> true
+            "B" -> true
+            "C" -> true
+            else -> false
+        }
+
+        val allPassPupils =
+                pupilReader.readPupilFile()
+                .filter { p -> atLeastC(p.EnglishGrade) }
+                .filter { p -> atLeastC(p.MathsGrade) }
+                .filter { p -> atLeastC(p.ScienceGrade) }
+
+        printPupils(allPassPupils)
     }
 }
